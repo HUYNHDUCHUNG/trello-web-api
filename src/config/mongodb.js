@@ -1,12 +1,8 @@
-const MONGODB_URI =
-  'mongodb+srv://huynhhung2108:k7smVleWm1E8yTvd@cluster0.rjlmaqg.mongodb.net/?retryWrites=true&w=majority'
-const DATABASE_NAME = 'trello'
-
 import { MongoClient, ServerApiVersion } from 'mongodb'
-
+import { env } from './environment'
 let trelloDatabaseInstance = null
 
-const clientInstance = new MongoClient(MONGODB_URI, {
+const clientInstance = new MongoClient(env.MONGODB_URI, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -17,10 +13,14 @@ const clientInstance = new MongoClient(MONGODB_URI, {
 export const CONNECT_DB = async () => {
   await clientInstance.connect()
 
-  trelloDatabaseInstance = clientInstance.db(DATABASE_NAME)
+  trelloDatabaseInstance = clientInstance.db(env.DATABASE_NAME)
 }
 
 export const GET_DB = () => {
   if (!trelloDatabaseInstance) throw new Error('must connect to Database first')
   return trelloDatabaseInstance
+}
+
+export const CLOSE_DB = async () => {
+  await clientInstance.close()
 }

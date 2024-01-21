@@ -1,21 +1,21 @@
 // eslint-disable-next-line no-console
 import express from 'express'
-import { mapOrder } from '~/utils/sorts.js'
-import { CONNECT_DB, GET_DB } from '~/config/mongodb'
-
+// import { mapOrder } from '~/utils/sorts.js'
+import { CLOSE_DB, CONNECT_DB, GET_DB } from '~/config/mongodb'
+import exitHook from 'async-exit-hook'
+import { env } from '~/config/environment'
+import { APIs_V1 } from './routes/v1'
 const START_SERVER = () => {
   const app = express()
 
-  const hostname = 'localhost'
-  const port = 8017
-
-  app.get('/', async (req, res) => {
-    console.log(await GET_DB().listCollections().toArray())
-    res.end('<h1>Hello World!</h1><hr>')
+  app.use(express.json())
+  app.use('/v1', APIs_V1)
+  app.listen(env.APP_PORT, env.APP_HOST, () => {
+    console.log(`Server running at http://${env.APP_HOST}:${env.APP_PORT}/`)
   })
 
-  app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`)
+  exitHook(() => {
+    CLOSE_DB()
   })
 }
 
