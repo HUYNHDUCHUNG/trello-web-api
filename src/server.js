@@ -5,11 +5,11 @@ import { CLOSE_DB, CONNECT_DB, GET_DB } from '~/config/mongodb'
 import exitHook from 'async-exit-hook'
 import { env } from '~/config/environment'
 import { APIs_V1 } from './routes/v1'
-import { CorsOptions } from 'cors'
+import { corsOptions } from '~/utils/cors'
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware.js'
 const START_SERVER = () => {
   const app = express()
-  app.use(cors(CorsOptions))
+  app.use(cors(corsOptions))
   // Enable req.body json data
   app.use(express.json())
 

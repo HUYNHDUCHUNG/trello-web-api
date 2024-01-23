@@ -1,5 +1,6 @@
 import { slugify } from '~/utils/formatter'
 import { boardModel } from '~/models/boardModel'
+import { cloneDeep } from 'lodash'
 const createNew = async (data) => {
   // eslint-disable-next-line no-useless-catch
   try {
@@ -18,11 +19,20 @@ const createNew = async (data) => {
   }
 }
 
-const getDetails = async (id) => {
+const getDetails = async (boardId) => {
   // eslint-disable-next-line no-useless-catch
   try {
-    const getBoardDetails = await boardModel.getDetails(id)
-    return getBoardDetails
+    const board = await boardModel.getDetails(boardId)
+
+    const resBoard = cloneDeep(board)
+
+    resBoard.columns.forEach((column) => {
+      column.cards = resBoard.cards.filter((card) => card.columnId.toString() === column._id.toString())
+    })
+
+    delete resBoard.cards
+
+    return resBoard
   } catch (error) {
     throw error
   }
