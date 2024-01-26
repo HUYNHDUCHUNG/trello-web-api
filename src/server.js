@@ -18,9 +18,15 @@ const START_SERVER = () => {
 
   app.use(errorHandlingMiddleware)
 
-  app.listen(env.APP_PORT, env.APP_HOST, () => {
-    console.log(`Server running at http://${env.APP_HOST}:${env.APP_PORT}/`)
-  })
+  if (env.BUILD_MODE === 'dev') {
+    app.listen(env.APP_PORT, env.APP_HOST, () => {
+      console.log(`Server running at http://${env.APP_HOST}:${env.APP_PORT}/`)
+    })
+  } else {
+    app.listen(process.env.PORT, () => {
+      console.log('Server running')
+    })
+  }
 
   exitHook(() => {
     CLOSE_DB()
